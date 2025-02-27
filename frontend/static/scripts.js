@@ -32,13 +32,21 @@ function produceNewspaper() {
         topics: topics,
         layout: selectedLayout
     };
-
-    fetch('http://localhost:8000/generate_newspaper', {
+    
+    // Get the current hostname and construct backend URL correctly for Codespaces
+    var currentHost = window.location.hostname;
+    const backendPort = 8000, frontendPort = 5000;
+    currentHost = currentHost.replace(frontendPort.toString(), backendPort.toString());
+    const backendUrl = `https://${currentHost}/generate_newspaper`;
+    
+    fetch(backendUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        mode: 'no-cors',
+        credentials: 'include'
     })
     .then(response => response.json())
     .then(data => {

@@ -22,15 +22,18 @@ class CritiqueAgent:
                        f"return None if you think the article is good.\n"
                         f"Please return a string of your critique or None.\n"
         }]
-
-        lc_messages = convert_openai_messages(prompt)
-        response = ChatOpenAI(model='gpt-4', max_retries=1).invoke(lc_messages).content
-        if response == 'None':
+        try:
+            lc_messages = convert_openai_messages(prompt)
+            response = ChatOpenAI(model='gpt-4', max_retries=1).invoke(lc_messages).content
+            if response == 'None':
+                return {'critique': None}
+            else:
+                print(f"For article: {article['title']}")
+                print(f"Feedback: {response}\n")
+                return {'critique': response, 'message': None}
+        except Exception as e:
+            print(e)
             return {'critique': None}
-        else:
-            print(f"For article: {article['title']}")
-            print(f"Feedback: {response}\n")
-            return {'critique': response, 'message': None}
 
     def run(self, article: dict):
         article.update(self.critique(article))

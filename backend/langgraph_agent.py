@@ -6,7 +6,6 @@ from langgraph.graph import Graph
 # Import agent classes
 from .agents import SearchAgent, CuratorAgent, WriterAgent, DesignerAgent, EditorAgent, PublisherAgent, CritiqueAgent
 
-
 class MasterAgent:
     def __init__(self):
         self.output_dir = f"outputs/run_{int(time.time())}"
@@ -44,15 +43,18 @@ class MasterAgent:
         workflow.set_entry_point("search")
         workflow.set_finish_point("design")
 
-        # compile the graph
-        chain = workflow.compile()
+        try:
+            # compile the graph
+            chain = workflow.compile()
 
-        # Execute the graph for each query in parallel
-        with ThreadPoolExecutor() as executor:
-            parallel_results = list(executor.map(lambda q: chain.invoke({"query": q}), queries))
+            # Execute the graph for each query in parallel
+            with ThreadPoolExecutor() as executor:
+                parallel_results = list(executor.map(lambda q: chain.invoke({"query": q}), queries))
 
-        # Compile the final newspaper
-        newspaper_html = editor_agent.run(parallel_results)
-        newspaper_path = publisher_agent.run(newspaper_html)
-
-        return newspaper_path
+            # Compile the final newspaper
+            newspaper_html = editor_agent.run(parallel_results)
+            newspaper_path = publisher_agent.run(newspaper_html)
+            return newspaper_path
+        except Exception as e:
+            print(e)
+            return None

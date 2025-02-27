@@ -54,13 +54,17 @@ class WriterAgent:
 
         }]
 
-        lc_messages = convert_openai_messages(prompt)
-        optional_params = {
-            "response_format": {"type": "json_object"}
-        }
+        try:
+            lc_messages = convert_openai_messages(prompt)
+            optional_params = {
+                "response_format": {"type": "json_object"}
+            }
 
-        response = ChatOpenAI(model='gpt-4-0125-preview', max_retries=1, model_kwargs=optional_params).invoke(lc_messages).content
-        return json.loads(response)
+            response = ChatOpenAI(model='gpt-4-0125-preview', max_retries=1, model_kwargs=optional_params).invoke(lc_messages).content
+            return json.loads(response)
+        except Exception as e:
+            print(e)
+            return None
 
     def revise(self, article: dict):
         prompt = [{
@@ -77,17 +81,20 @@ class WriterAgent:
                         f"{sample_revise_json}\n "
 
         }]
+        try:
+            lc_messages = convert_openai_messages(prompt)
+            optional_params = {
+                "response_format": {"type": "json_object"}
+            }
 
-        lc_messages = convert_openai_messages(prompt)
-        optional_params = {
-            "response_format": {"type": "json_object"}
-        }
-
-        response = ChatOpenAI(model='gpt-4-0125-preview', max_retries=1, model_kwargs=optional_params).invoke(lc_messages).content
-        response = json.loads(response)
-        print(f"For article: {article['title']}")
-        print(f"Writer Revision Message: {response['message']}\n")
-        return response
+            response = ChatOpenAI(model='gpt-4-0125-preview', max_retries=1, model_kwargs=optional_params).invoke(lc_messages).content
+            response = json.loads(response)
+            print(f"For article: {article['title']}")
+            print(f"Writer Revision Message: {response['message']}\n")
+            return response
+        except Exception as e:
+            print(e)
+            return None
 
     def run(self, article: dict):
         critique = article.get("critique")

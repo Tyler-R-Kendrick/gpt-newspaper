@@ -14,6 +14,7 @@ class SearchAgent:
         try:
             image = results["images"][0]
         except:
+            print("error setting image")
             image = "https://images.unsplash.com/photo-1542281286-9e0a16bb7366?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bmV3c3BhcGVyJTIwbmV3c3BhcGVyJTIwYXJ0aWNsZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80"
         return sources, image
 
